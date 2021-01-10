@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 加载数据库连接的资源文件 -->
+    <!-- classpath已经到了config这个 SOURCE目录下了 -->
+    <!-- 1. 加载配置文件，配置数据库相关参数properties的属性：${url} -->
+
+    <!--    <context:property-placeholder location="classpath:properties/jdbc.properties" />-->
+    <!--<import resource="springmvc.xml"></import>-->
+
+
+    <!--    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+    <!--        <property name="location" value="database.properties"/>-->
+    <!--    </bean>-->
+
+    <!--    像这些放在beans标签李,没得影响好像-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!-- 配置数据源   dbcp数据库连接池 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <!-- 8.0以上mysql服务器合 8.0以上的mysql-connector-bin使用的
+               <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>-->
+        <!--        <property name="url" value="jdbc:mysql://localhost:3306/springmvc?useSSL=fals-->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--        pool2 中修改 maxActive ==> maxTotal maxWait ==> maxWaitMillis-->
+        <property name="maxTotal" value="10"></property>
+        <property name="maxIdle" value="5"></property>
+        <property name="maxWaitMillis" value="10000"/>
+    </bean>
+
+    <!-- 配置sqlSessionFactory -->
+    <!--    mapper配置-->
+    <!--    让spring管理sqlSessionFactory,使用mybatis-spring这个整合jar里面的类-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据库连接池 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 加载Mybatis全局配置文件 -->
+        <!-- 配置MyBaties全局配置文件：SqlMapConfig.xml -->
+        <!--        都喜欢多在src这样的source目录下在建一个目录-->
+        <!--        <property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml" />-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!--        这还可以配置个Xxxmapper.xml的位置,但交给mybatis-config.xml配置了,即下面的 配一个就可以了-->
+        <!--        配一个地方就可以了,两个地方都配置会出错的-->
+        <!-- 扫描entity包 使用别名 -->
+        <!--        <property name="typeAliasesPackage" value="com.shop.domain" />-->
+        <!-- 扫描sql配置文件:mapper需要的xml文件 -->
+        <!--        下面这个也可以mybaist-config里面配置 用baseppackage,只不过时com.shop.dao的形式,都要知道-->
+        <property name="mapperLocations" value="classpath:com/shop/mapper/*.xml"/>
+
+    </bean>
+
+    <!-- 配置mapper 扫描器(接口?..还是所有?) -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描包路径，如果需要扫描多个包中间用半角逗号隔开, 这是找Xxxmapper接口-->
+        <property name="basePackage" value="com.shop.mapper"></property>
+        <!--        下面这个可写,可不写,MapperScannerConfigurer里面写了的,是可选项-->
+        <!--坑-->
+        <!--        方法一 : 去掉<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>-->
+        <!--        方法二 : 将方法一中的标签换成 <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>即可-->
+        <!--        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>-->
+    </bean>
+
+</beans>

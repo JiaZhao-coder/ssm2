@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!--    当前文件的所在目录, ./-->
+    <script src="./js/jquery.js"></script>
+
+    <title></title>
+</head>
+<body>
+
+<!--这个表单 没写action,-->
+<form id="uploadForm" enctype="multipart/form-data">
+    <!--    required保证了 文件上传时必须选择,否则 后端 要出现 null异常写死的-->
+    <div><img src="./images/t1.png" width="100" height="100"/></div>
+    更换头像:<input id="file" type="file" name="file" multiple="multiple" required="required"/>
+
+</form>
+
+<button id="upload" style="color:rgba(255,0,0,0.8);">确认修改头像</button>
+<!--旁边选颜色-->
+<div>
+    <button>不修改头像</button>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+    $(
+        function () {
+            //$("#upload") , 通过id 拿到这个,jquery,dom对象,click是里面触发 时的执行的函数
+            //$("#upload")这样写就是提前准备好
+            $("#upload").click(
+                //一个借助表单,但不通过表单发送
+                //$('#uploadForm')[0]拿到这个表单对象(可以包含多个)的第一个子项
+                function () {
+                    //把表单第一个文件上传那个 子项 传给下面的form的构造方法里面
+                    //那么下面的这个formdata里面就有这个 文件数据了
+                    var formData = new FormData($('#uploadForm')[0]);
+
+                    $.ajax(
+                        {
+                            type: 'post',
+                            url: "http://localhost:8080/ssm2_war_exploded/uploadOneItem.action",
+                            //这儿改数据库
+                            //上传文件的请求路径必须对
+                            //这个ajax只发送文件,通过这个url,把文件发过去
+                            //ajax 传文件,必须通过这个 formdata
+                            data: formData,
+                            cache: false,
+                            // 告诉jQuery不要去处理发送的数据
+                            processData: false,
+                            // 告诉jQuery不要去设置Content-Type请求头
+                            contentType: false,
+                        }
+                    )
+                        .success(function (data) {
+                            alert("ajax上传成功");
+                        })
+                        .error(function () {
+                            alert("ajax上传失败");
+                        });
+                }
+            );
+
+        }
+    );
+</script>
+
+</html>

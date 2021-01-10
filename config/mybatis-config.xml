@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+
+<!--    <typeAliases>-->
+<!--        <package name="com.shop.domain"/>-->
+<!--    </typeAliases>-->
+
+    <!--    <environments default="development">-->
+
+    <!--        <environment id="development">-->
+    <!--            <transactionManager type="JDBC"></transactionManager>-->
+    <!--            <dataSource type="POOLED">-->
+
+    <!--                &lt;!&ndash;用的jdbc的自带的连接池(数据源)                5.几的老版本,不需要cj，也不需要改时区&ndash;&gt;-->
+    <!--                <property name="driver" value="com.mysql.jdbc.Driver"/>-->
+    <!--                <property name="url" value="jdbc:mysql://localhost:3306/runoob?characterEncoding=UTF-8"/>-->
+    <!--                <property name="username" value="root"/>-->
+    <!--                <property name="password" value="JiaZhao123"/>-->
+    <!--            </dataSource>-->
+    <!--        </environment>-->
+
+    <!--    </environments>-->
+
+    <!--    <mappers>-->
+<!--    class,是mapper接口或者实体类-->
+<!--    classpath是类路径:所以后面跟的都是com/shop之类的目录,而不像java里面的那些包直接com.shop.xxx-->
+    <!--        &lt;!&ndash;     dao.xml也可以配置这个   这只是一个mapper，以后会有很多,所以package=以后常用,这也关联到mapper了&ndash;&gt;-->
+    <!--        <mapper resource="com\shop\dao\ProductMapper.xml" ></mapper>-->
+    <!--        <package name="com.shop.dao"  />-->
+    <!--    </mappers>-->
+
+
+</configuration>

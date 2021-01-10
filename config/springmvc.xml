@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--     其实springmvc.xml已经做了 包括 applicationContext.xml,和mvc里面的那些处理器的事了-->
+    <!--     为啥没在这里面配置service dao，web里面的那些类，因为都用注解 简化了 在xml里面的配置了，这样效率变高-->
+    <!--    但是 一定要记得开启扫描，否则会导致 spring容器不会帮你管理，@Autowired(自动注入)时必会出错-->
+
+
+    <!--
+        处理器映射器
+        <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+
+        处理器适配器
+        <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"></bean>
+
+        视图解析器
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="prefix" value="/WEB-INF/jsp/"></property>
+            <property name="suffix" value=".jsp"></property>
+        </bean>
+
+
+        <bean name="/home" class="com.shop.web.HomeController"></bean>
+
+        -->
+
+    <!--      这个扫描一定要开启，才能扫描到那些 例如 @componet，@sevice 等基于@componet的注解-->
+    <context:component-scan base-package="com.shop.web"></context:component-scan>
+
+
+    <!--    这下面的这几个还要仔细看看-->
+    <!--    <mvc:resources mapping="/images/**" location="/images/"></mvc:resources>-->
+    <!--    <mvc:resources mapping="/js/**" location="/js/"></mvc:resources>-->
+    <!--    <mvc:resources mapping="/css/**" location="/css/"></mvc:resources>-->
+    <!--    <mvc:resources mapping="/jsp/**" location="/jsp/"></mvc:resources>-->
+
+    <!-- 可以访问静态资源 -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 解析@RequestMapping 取代 适配器 , 映射器 , 等spring MVC那些 必须需要配置的 这些处理 个种自动的任务-->
+    <!--    简化了spinrg MVC的配置,下面这一行-->
+    <mvc:annotation-driven/>
+
+    <!--    mvc处理器拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--            /**代表所有请求都会被拦截，包括多级目录这种-->
+            <mvc:mapping path="/**"/>
+            <!--            通过在springMVC里面配置的,没使用 @Conponent那种 注册bean-->
+            <!--            好像要实现这个还要引入commos-io 和 comomos-fileupload否则一直报错-->
+            <bean class="com.shop.utils.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 配置文件上传解析器 不要跟那个视图解析器看混了 -->
+
+    <bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 配置一次上传文件最大尺寸为1000MB -->
+        <property name="maxUploadSize" value="1048576000"/>
+        <!-- 设置在文件上传时允许写到内存中的最大值，以字节为单位计算，默认是1024 =1KB -->
+        <property name="maxInMemorySize" value="4096"/>
+        <!-- 表示用来解析request请求的默认编码格式，当没有指定的时候根据Servlet规范会使用默认值ISO-8859-1。 -->
+        <!-- 当request自己指明了它的编码格式的时候就会忽略这里指定的defaultEncoding,下面使用utf-8 -->
+        <property name="defaultEncoding" value="UTF-8"/>
+
+
+    </bean>
+
+
+    <!-- 配置视图解析器 不一定 非得时jsp,html结尾也可以,只要路径写对,zai web目录下面来了 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--        /WEB-INF/jsp/这个路径一定要写对,是否在web-inf下面都一定要写对，关系到return string 那里返回的视图-->
+        <!--        配置的这个前缀,依然时在web,war_exployed目录下,因为你要通过使用直接页面的名字,必须配置这个
+        但不一定必须在web-inf下面,只要路径对,在web下面就对-->
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+</beans>
